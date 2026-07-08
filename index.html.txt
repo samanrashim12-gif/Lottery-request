@@ -1,0 +1,468 @@
+
+import os
+
+# Create output directory
+os.makedirs('/mnt/agents/output/lottery-website', exist_ok=True)
+
+# ============= index.html =============
+index_html = '''<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>සියලු ලොතරැයි ප්‍රතිඵල - ශ්‍රී ලංකාවේ ලොතරැයි ප්‍රතිඵල</title>
+    <meta name="description" content="ශ්‍රී ලංකාවේ සියලුම ලොතරැයි ප්‍රතිඵල එකම ස්ථානයක. අද කෝටිපති, මහජන සම්පත, ගොවි සෙත, වාසනා සම්පත සහ තවත් බොහෝ ලොතරැයි ප්‍රතිඵල.">
+    <meta name="keywords" content="ලොතරැයි ප්‍රතිඵල, ශ්‍රී ලංකාව, අද කෝටිපති, මහජන සම්පත, ගොවි සෙත, වාසනා සම්පත, lottery results, Sri Lanka">
+    <meta name="author" content="සියලු ලොතරැයි ප්‍රතිඵල">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="සියලු ලොතරැයි ප්‍රතිඵල - ශ්‍රී ලංකාවේ ලොතරැයි ප්‍රතිඵල">
+    <meta property="og:description" content="ශ්‍රී ලංකාවේ සියලුම ලොතරැයි ප්‍රතිඵල එකම ස්ථානයක.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lotteryresults.lk">
+    <meta property="og:image" content="https://lotteryresults.lk/images/og-image.jpg">
+    <meta property="og:locale" content="si_LK">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="සියලු ලොතරැයි ප්‍රතිඵල">
+    <meta name="twitter:description" content="ශ්‍රී ලංකාවේ සියලුම ලොතරැයි ප්‍රතිඵල එකම ස්ථානයක.">
+    <meta name="twitter:image" content="https://lotteryresults.lk/images/twitter-card.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://lotteryresults.lk">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎰</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "NewsMediaOrganization",
+        "name": "සියලු ලොතරැයි ප්‍රතිඵල",
+        "url": "https://lotteryresults.lk",
+        "logo": "https://lotteryresults.lk/images/logo.png",
+        "description": "ශ්‍රී ලංකාවේ සියලුම ලොතරැයි ප්‍රතිඵල එකම ස්ථානයක.",
+        "sameAs": [
+            "https://facebook.com/lotteryresults.lk",
+            "https://twitter.com/lotteryresults"
+        ],
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "LK"
+        }
+    }
+    </script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Animation -->
+    <div id="loading-overlay" class="loading-overlay" aria-hidden="true">
+        <div class="loading-spinner">
+            <div class="spinner-circle"></div>
+            <p>පූරණය වෙමින්...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header id="main-header" class="header" role="banner">
+        <div class="header-top">
+            <div class="container header-top-inner">
+                <div class="logo-section">
+                    <a href="#" class="logo-link" aria-label="මුල් පිටුවට">
+                        <span class="logo-icon" aria-hidden="true">🎰</span>
+                        <div class="logo-text">
+                            <h1 class="site-title">සියලු ලොතරැයි ප්‍රතිඵල</h1>
+                            <span class="site-tagline">ශ්‍රී ලංකාවේ ලොතරැයි ප්‍රතිඵල</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="live-clock" aria-label="වර්තමාන වේලාව">
+                        <span class="clock-icon" aria-hidden="true">🕐</span>
+                        <span id="live-time">--:--:--</span>
+                        <span id="live-date" class="live-date">--</span>
+                    </div>
+                    
+                    <button id="dark-mode-toggle" class="btn-icon" aria-label="අඳුරු මාදිලිය මාරු කරන්න" title="අඳුරු මාදිලිය">
+                        <span class="dark-icon">🌙</span>
+                        <span class="light-icon">☀️</span>
+                    </button>
+                    
+                    <button id="mobile-menu-btn" class="btn-icon mobile-only" aria-label="ජංගම මෙනුව විවෘත කරන්න" aria-expanded="false" aria-controls="mobile-nav">
+                        <span class="menu-icon">☰</span>
+                        <span class="close-icon">✕</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="main-nav" role="navigation" aria-label="ප්‍රධාන මෙනුව">
+            <div class="container">
+                <ul class="nav-list">
+                    <li><a href="#hero" class="nav-link active">මුල් පිටුව</a></li>
+                    <li><a href="#lottery-cards" class="nav-link">අද ප්‍රතිඵල</a></li>
+                    <li><a href="#latest-results" class="nav-link">නවතම ප්‍රතිඵල</a></li>
+                    <li><a href="#statistics" class="nav-link">සංඛ්‍යාලේඛන</a></li>
+                    <li><a href="#calendar-section" class="nav-link">දින දර්ශනය</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobile-nav" class="mobile-nav" role="dialog" aria-label="ජංගම මෙනුව" aria-hidden="true">
+            <div class="mobile-nav-overlay"></div>
+            <div class="mobile-nav-panel">
+                <div class="mobile-nav-header">
+                    <span class="logo-icon">🎰</span>
+                    <span class="mobile-nav-title">සියලු ලොතරැයි ප්‍රතිඵල</span>
+                </div>
+                <ul class="mobile-nav-list">
+                    <li><a href="#hero" class="mobile-nav-link">මුල් පිටුව</a></li>
+                    <li><a href="#lottery-cards" class="mobile-nav-link">අද ප්‍රතිඵල</a></li>
+                    <li><a href="#latest-results" class="mobile-nav-link">නවතම ප්‍රතිඵල</a></li>
+                    <li><a href="#statistics" class="mobile-nav-link">සංඛ්‍යාලේඛන</a></li>
+                    <li><a href="#calendar-section" class="mobile-nav-link">දින දර්ශනය</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="hero" aria-label="ප්‍රධාන හෙළිකිරීම">
+            <div class="hero-bg" aria-hidden="true">
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+                <div class="hero-particle"></div>
+            </div>
+            <div class="container hero-content">
+                <div class="hero-badge">
+                    <span class="hero-badge-icon">🔴</span>
+                    <span>සජීවී යාවත්කාලීන කිරීම්</span>
+                </div>
+                <h2 class="hero-title">අද දින ලොතරැයි ප්‍රතිඵල</h2>
+                <p class="hero-subtitle">"ශ්‍රී ලංකාවේ සියලුම ලොතරැයි ප්‍රතිඵල එකම ස්ථානයක."</p>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon" aria-hidden="true">🔍</span>
+                        <input type="text" id="search-input" class="search-input" placeholder="ලොතරැයි නම, ඇදීම් අංකය හෝ දිනය සොයන්න..." aria-label="ලොතරැයි ප්‍රතිඵල සොයන්න" autocomplete="off">
+                        <button id="search-clear" class="search-clear" aria-label="සෙවුම් පෙළ හිස් කරන්න">✕</button>
+                    </div>
+                    <div id="search-suggestions" class="search-suggestions" aria-live="polite"></div>
+                </div>
+                
+                <!-- Filter -->
+                <div class="filter-bar">
+                    <label for="filter-select" class="filter-label">පෙරහන:</label>
+                    <select id="filter-select" class="filter-select" aria-label="ප්‍රතිඵල පෙරහන">
+                        <option value="all">සියලුම</option>
+                        <option value="today">අද</option>
+                        <option value="week">මෙම සතිය</option>
+                        <option value="month">මෙම මාසය</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lottery Cards Section -->
+        <section id="lottery-cards" class="lottery-cards-section" aria-label="අද ලොතරැයි ප්‍රතිඵල">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">🎯</span>
+                        අද කාඩ්පත්
+                    </h2>
+                    <p class="section-desc">අද දින ඇදීම් කළ සියලුම ලොතරැයි ප්‍රතිඵල</p>
+                </div>
+                <div id="lottery-cards-grid" class="lottery-cards-grid">
+                    <!-- Cards will be rendered by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="statistics" class="statistics-section" aria-label="සංඛ්‍යාලේඛන">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">📊</span>
+                        සංඛ්‍යාලේඛන
+                    </h2>
+                    <p class="section-desc">අපගේ වේදිකාවේ යාවත්කාලීන තොරතුරු</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card" data-target="1250">
+                        <div class="stat-icon" aria-hidden="true">🎲</div>
+                        <div class="stat-number" data-value="1250">0</div>
+                        <div class="stat-label">මුළු ඇදීම් ගණන</div>
+                    </div>
+                    <div class="stat-card" data-target="8">
+                        <div class="stat-icon" aria-hidden="true">📅</div>
+                        <div class="stat-number" data-value="8">0</div>
+                        <div class="stat-label">අද ඇදීම් ගණන</div>
+                    </div>
+                    <div class="stat-card" data-target="8">
+                        <div class="stat-icon" aria-hidden="true">🏆</div>
+                        <div class="stat-number" data-value="8">0</div>
+                        <div class="stat-label">ලොතරැයි වර්ග ගණන</div>
+                    </div>
+                    <div class="stat-card" data-target="1">
+                        <div class="stat-icon" aria-hidden="true">⏱️</div>
+                        <div class="stat-number" id="stat-minutes" data-value="0">0</div>
+                        <div class="stat-label">මිනිත්තු පෙර යාවත්කාලීන කරන ලදී</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latest Results Section -->
+        <section id="latest-results" class="latest-results-section" aria-label="නවතම ලොතරැයි ප්‍රතිඵල">
+            <div class="container">
+                <div class="content-layout">
+                    <!-- Main Content -->
+                    <div class="main-column">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <span class="section-icon" aria-hidden="true">📋</span>
+                                නවතම ප්‍රතිඵල
+                            </h2>
+                            <p class="section-desc">අලුතම ලොතරැයි ඇදීම් ප්‍රතිඵල 20</p>
+                        </div>
+                        <div id="latest-results-list" class="latest-results-list">
+                            <!-- Results will be rendered by JavaScript -->
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="results-actions">
+                            <button id="print-btn" class="btn btn-secondary" aria-label="ප්‍රතිඵල මුද්‍රණය කරන්න">
+                                <span aria-hidden="true">🖨️</span> මුද්‍රණය කරන්න
+                            </button>
+                            <button id="download-btn" class="btn btn-secondary" aria-label="PDF ලෙස බාගත කරන්න">
+                                <span aria-hidden="true">📥</span> PDF ලෙස බාගත කරන්න
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar -->
+                    <aside class="sidebar" aria-label="පැති තීරුව">
+                        <!-- Popular Lotteries -->
+                        <div class="sidebar-widget">
+                            <h3 class="widget-title">
+                                <span aria-hidden="true">🔥</span> ජනප්‍රිය ලොතරැයි
+                            </h3>
+                            <ul class="popular-list">
+                                <li><a href="#" class="popular-link"><span class="popular-rank">1</span> අද කෝටිපති</a></li>
+                                <li><a href="#" class="popular-link"><span class="popular-rank">2</span> මහජන සම්පත</a></li>
+                                <li><a href="#" class="popular-link"><span class="popular-rank">3</span> ගොවි සෙත</a></li>
+                                <li><a href="#" class="popular-link"><span class="popular-rank">4</span> වාසනා සම්පත</a></li>
+                                <li><a href="#" class="popular-link"><span class="popular-rank">5</span> දන නිධානය</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Recent Results -->
+                        <div class="sidebar-widget">
+                            <h3 class="widget-title">
+                                <span aria-hidden="true">🕐</span> මෑත ප්‍රතිඵල
+                            </h3>
+                            <ul class="recent-list" id="sidebar-recent">
+                                <!-- Rendered by JS -->
+                            </ul>
+                        </div>
+                        
+                        <!-- Latest News -->
+                        <div class="sidebar-widget">
+                            <h3 class="widget-title">
+                                <span aria-hidden="true">📰</span> නවතම පුවත්
+                            </h3>
+                            <div class="news-list">
+                                <article class="news-item">
+                                    <span class="news-date">2026-07-08</span>
+                                    <h4 class="news-title">කෝටිපති ලොතරැයියේ විශාල ජයග්‍රාහකයෙක්</h4>
+                                </article>
+                                <article class="news-item">
+                                    <span class="news-date">2026-07-07</span>
+                                    <h4 class="news-title">නව ලොතරැයි ඇදීම් කාලසටහන නිකුත් විය</h4>
+                                </article>
+                                <article class="news-item">
+                                    <span class="news-date">2026-07-06</span>
+                                    <h4 class="news-title">ලොතරැයි මණ්ඩලයෙන් නව ප්‍රකාශනයක්</h4>
+                                </article>
+                            </div>
+                        </div>
+                        
+                        <!-- Advertisement Placeholder -->
+                        <div class="sidebar-widget ad-widget" aria-label="වෙළඳ දැන්වීම">
+                            <div class="ad-placeholder">
+                                <span class="ad-label">වෙළඳ දැන්වීම</span>
+                                <div class="ad-content">
+                                    <span class="ad-icon">📢</span>
+                                    <p>ඔබගේ වෙළඳ දැන්වීම මෙහි ප්‍රදර්ශනය කරන්න</p>
+                                    <span class="ad-size">300 x 250</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Share Buttons -->
+                        <div class="sidebar-widget">
+                            <h3 class="widget-title">
+                                <span aria-hidden="true">🔗</span> බෙදාගන්න
+                            </h3>
+                            <div class="share-buttons">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u=https://lotteryresults.lk" target="_blank" rel="noopener noreferrer" class="share-btn share-facebook" aria-label="Facebook හි බෙදාගන්න">
+                                    <span aria-hidden="true">📘</span> Facebook
+                                </a>
+                                <a href="https://wa.me/?text=සියලු%20ලොතරැයි%20ප්‍රතිඵල%20-%20https://lotteryresults.lk" target="_blank" rel="noopener noreferrer" class="share-btn share-whatsapp" aria-label="WhatsApp හි බෙදාගන්න">
+                                    <span aria-hidden="true">💬</span> WhatsApp
+                                </a>
+                                <a href="https://t.me/share/url?url=https://lotteryresults.lk&text=සියලු%20ලොතරැයි%20ප්‍රතිඵල" target="_blank" rel="noopener noreferrer" class="share-btn share-telegram" aria-label="Telegram හි බෙදාගන්න">
+                                    <span aria-hidden="true">✈️</span> Telegram
+                                </a>
+                                <button id="copy-link-btn" class="share-btn share-copy" aria-label="සබැඳිය පිටපත් කරන්න">
+                                    <span aria-hidden="true">📋</span> සබැඳිය පිටපත් කරන්න
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section id="calendar-section" class="calendar-section" aria-label="ලොතරැයි දින දර්ශනය">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">📅</span>
+                        ලොතරැයි දින දර්ශනය
+                    </h2>
+                    <p class="section-desc">ලොතරැයි ඇදීම් දින සලකුණු කරන ලද දින දර්ශනය</p>
+                </div>
+                <div class="calendar-wrapper">
+                    <div class="calendar-header">
+                        <button id="cal-prev" class="cal-nav-btn" aria-label="පෙර මාසය">
+                            <span aria-hidden="true">◀</span>
+                        </button>
+                        <h3 id="cal-month-year" class="cal-month-year"></h3>
+                        <button id="cal-next" class="cal-nav-btn" aria-label="ඊළඟ මාසය">
+                            <span aria-hidden="true">▶</span>
+                        </button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- Calendar rendered by JS -->
+                    </div>
+                    <div class="calendar-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot legend-draw"></span>
+                            <span>ඇදීම් දින</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot legend-today"></span>
+                            <span>අද</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-icon">🎰</span>
+                        <span class="footer-site-name">සියලු ලොතරැයි ප්‍රතිඵල</span>
+                    </div>
+                    <p class="footer-desc">ශ්‍රී ලංකාවේ සියලුම ලොතරැයි ප්‍රතිඵල එකම ස්ථානයක. නිවැරදි, වේගවත්, විශ්වසනීය තොරතුරු.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">ඉක්මන් සබැඳි</h4>
+                    <ul>
+                        <li><a href="#hero">මුල් පිටුව</a></li>
+                        <li><a href="#lottery-cards">අද ප්‍රතිඵල</a></li>
+                        <li><a href="#latest-results">නවතම ප්‍රතිඵල</a></li>
+                        <li><a href="#statistics">සංඛ්‍යාලේඛන</a></li>
+                        <li><a href="#calendar-section">දින දර්ශනය</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">නීතිමය</h4>
+                    <ul>
+                        <li><a href="#" onclick="showModal('privacy')">පෞද්ගලිකත්ව ප්‍රතිපත්තිය</a></li>
+                        <li><a href="#" onclick="showModal('disclaimer')">වගකීම් හැරවීම</a></li>
+                        <li><a href="#" onclick="showModal('terms')">සේවා කොන්දේසි</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-contact">
+                    <h4 class="footer-title">අමතන්න</h4>
+                    <ul>
+                        <li><span aria-hidden="true">📧</span> info@lotteryresults.lk</li>
+                        <li><span aria-hidden="true">📞</span> +94 11 234 5678</li>
+                        <li><span aria-hidden="true">📍</span> කොළඹ, ශ්‍රී ලංකාව</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 සියලු ලොතරැයි ප්‍රතිඵල. සියලු හිමිකම් ඇවිරිණි.</p>
+                <p class="footer-note">මෙම වෙබ් අඩවිය ශ්‍රී ලංකා ලොතරැයි මණ්ඩලයේ නිල වෙබ් අඩවිය නොවේ.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="ඉහළට යන්න" title="ඉහළට යන්න">
+        <span aria-hidden="true">▲</span>
+    </button>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true">
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title" class="modal-title"></h3>
+                <button class="modal-close" onclick="closeModal()" aria-label="වසන්න">✕</button>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>'''
+
+with open('/mnt/agents/output/lottery-website/index.html', 'w', encoding='utf-8') as f:
+    f.write(index_html)
+
+print("index.html created successfully!")
